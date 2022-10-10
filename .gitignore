@@ -1,0 +1,6 @@
+robot-venv
+robotframework
+minicom.cap
+*.xml
+*.html
+*.log
