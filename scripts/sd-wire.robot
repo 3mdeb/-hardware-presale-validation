@@ -12,8 +12,12 @@ Suite Teardown    Run Keyword    Log Out And Close Connection
 
 Resource    ../rtectrl-rest-api/rtectrl.robot
 Resource    ../keywords.robot
-Resource    ../keys.robot
+Resource    ../variables.robot
+#Resource    ../keys.robot
 
 *** Test Cases ***
 
-#First test case
+SDWire_001 SD wire is recognizable
+    [Documentation]    This test aims to verify that the connected SD wire is
+    ...                recognizable by the Test Server
+    No Operation
