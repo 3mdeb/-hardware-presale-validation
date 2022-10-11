@@ -6,6 +6,8 @@ Prepare Test Suite
     ...                preparing connection with the DUT based on used 
     ...                transmission protocol. Keyword used in all [Suite Setup] 
     ...                sections.
+    IF    '${tested_platform}' == 'sd-wire'    Import Resource    ${CURDIR}/variables/sd-wire-variables.robot
+    ...    ELSE    FAIL    \nUnknown tested platform
     Open Connection And Log In
 
 Open Connection And Log In
@@ -13,6 +15,7 @@ Open Connection And Log In
     ...                REST API and serial connection with the Device Under Test
     #Check provided ip
     SSHLibrary.Set Default Configuration    timeout=60 seconds
+    Set Global Variable    ${rte_ip}    ${stand_ip}
     SSHLibrary.Open Connection    ${rte_ip}    prompt=~#
     SSHLibrary.Login    ${USERNAME}    ${PASSWORD}
     REST API Setup    RteCtrl
