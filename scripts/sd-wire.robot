@@ -12,8 +12,6 @@ Suite Teardown    Run Keyword    Log Out And Close Connection
 
 Resource    ../rtectrl-rest-api/rtectrl.robot
 Resource    ../keywords.robot
-Resource    ../variables.robot
-#Resource    ../keys.robot
 
 *** Test Cases ***
 
