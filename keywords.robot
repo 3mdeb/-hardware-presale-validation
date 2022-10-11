@@ -6,7 +6,7 @@ Prepare Test Suite
     ...                preparing connection with the DUT based on used 
     ...                transmission protocol. Keyword used in all [Suite Setup] 
     ...                sections.
-    IF    '${tested_platform}' == 'sd-wire'    Import Resource    ${CURDIR}/variables/sd-wire-variables.robot
+    IF    '${tested_platform}' == 'sd_wire'    Import Resource    ${CURDIR}/variables/sd-wire-variables.robot
     ...    ELSE    FAIL    \nUnknown tested platform
     Open Connection And Log In
 
