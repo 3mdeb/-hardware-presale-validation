@@ -19,7 +19,7 @@ Virtualenv Initialization
 
 ```bash
 git clone git@gitlab.com:3mdeb/rte/hardware-presale-validation.git
-cd open-firmware-rte
+cd hardware-presale-validation
 git submodule update --init --checkout
 virtualenv -p $(which python3) robot-venv
 source robot-venv/bin/activate
