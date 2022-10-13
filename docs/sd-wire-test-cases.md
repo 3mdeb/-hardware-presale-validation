@@ -72,33 +72,73 @@ DUT - Device under test
 1. Run in the TS terminal the following command:
 
     ```bash
-    sudo sd-mux-ctrl --device-serial=sd-wire_11 --ts
+    sudo sd-mux-ctrl --device-serial=<serial_device> --ts
     ```
 
-1. Output ?
+1. Check the status of the connection by running the following command:
+
+    ```bash
+    sudo sd-mux-ctrl --device-serial=<serial_device> --status
+    ```
+
+1. The output should be equal:
+
+    ```bash
+    USB connected to: TS
+    SD connected to: TS
+    ```
 
 ## SDWire_004 SD card flashing
 
 1. Run in the TS terminal the following commands:
 
     ```bash
-    sudo bmaptool copy --bmap ~/path/where/your/bmap/file/is/located /path/where/your/image/is/located /path/to/memory/device
+    sudo bmaptool copy --nobmap <RTE_image> <device_path>
     ```
 
-1. Output ?
+    Example command:
+
+    ```bash
+    sudo bmaptool copy --nobmap core-image-minimal-orange-pi-zero-v0.7.3.wic.gz /dev/sda
+    ```
+
+1. The output should be similar to this below:
+
+    ```bash
+    bmaptool: info: no bmap given, copy entire image to '/dev/sda'
+    \
+    bmaptool: info: synchronizing '/dev/sda'
+    bmaptool: info: copying time: 1m 34.2s, copying speed 11.1 MiB/sec
+    ```
 
 ## SDWire_005 SD-wire connects to the DUT
 
 1. Run in the TS terminal the following command:
 
     ```bash
-    sudo sd-mux-ctrl --device-serial=sd-wire_11 --dut
+    sudo sd-mux-ctrl --device-serial=<serial_device> --dut
     ```
 
-1. Output ?
+1. Check the status of the connection by running the following command:
+
+    ```bash
+    sudo sd-mux-ctrl --device-serial=<serial_device> --status
+    ```
+
+1. The output should be equal:
+
+    ```bash
+    USB connected to: DUT
+    SD connected to: DUT
+    ```
 
 ## SDWire_006 Booting OS from SD-wire
 
 1. Power on the DUT.
-1. Get output from the DUT.
+1. Run the following command to get the output form :
+
+    ```bash
+    minicom -D /dev/ttyUSB0
+    ```
+
 1. The DUT should properly boot to the `login` phrase.
