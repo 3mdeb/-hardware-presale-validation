@@ -143,14 +143,48 @@ It's important to say that setup for `Armbian` is similar to setup for
 1. Set static ip for RTE - while connected with RTE via minicom, edit
     `/etc/network/interfaces.d/eth0` file (vim or nano):
 
-    ```bash
-    auto eth0
-    iface eth0 inet static
-            address 192.168.3.XX
-            netmask 255.255.255.0
-            gateway 192.168.3.1
-            dns-nameservers 8.8.8.8 8.8.4.4
-    ```
+    - Back up the /etc/network/interfaces file:
+
+        ```bash
+        cp /etc/network/interfaces /etc/network/interfaces.backup
+        ```
+
+    - Edit it afterwards:
+
+        ```bash
+        sudo nano /etc/network/interfaces
+        ```
+
+    - Copy this Ethernet configuration, where the ‘address’ field contains the
+        static IP address you want to assign to the device:
+
+        ```bash
+        # Ethernet adapter 0
+        auto eth0
+        allow-hotplug eth0
+        #no-auto-down eth0
+        iface eth0 inet static
+        address 192.168.1.100
+        netmask 255.255.255.0
+        gateway 192.168.1.1
+        dns-nameservers 192.168.1.1
+        #dns-nameservers 1.1.1.1 1.0.0.1
+        ```
+
+    - Exit by pressing `Crtl+X` and press `Y` to save the file.
+
+    - If you have a previously configured Ethernet adapter as follows, remove
+        that line from the interfaces file:
+
+        ```bash
+        iface eth0 inet dhcp
+        ```
+
+    - Now you must reboot the system for the changes to take effect:
+
+        ```bash
+        reboot
+        ```
 
 ### RTE configuration
 
