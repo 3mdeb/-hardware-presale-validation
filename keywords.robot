@@ -19,7 +19,7 @@ Open Connection And Log In
     SSHLibrary.Open Connection    ${rte_ip}    prompt=~#
     SSHLibrary.Login    ${USERNAME}    ${PASSWORD}
     REST API Setup    RteCtrl
-    Serial setup    ${rte_ip}    ${rte_s2n_port}
+    # Serial setup    ${rte_ip}    ${rte_s2n_port}
 
 Log Out And Close Connection
     [Documentation]    Close all opened SSH and serial connections
