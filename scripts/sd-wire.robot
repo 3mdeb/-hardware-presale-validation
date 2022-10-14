@@ -68,4 +68,6 @@ SDWire_006 Booting OS from SD-wire
     SSHLibrary.Execute Command    ./rte_ctrl -rel
     SSHLibrary.Write    minicom -D /dev/ttyUSB0
     SSHLibrary.Read Until    login:
+    SSHLibrary.Close All Connections
+    Open Connection And Log In
     SSHLibrary.Execute Command    ./rte_ctrl -rel
