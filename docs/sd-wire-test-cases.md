@@ -1,18 +1,18 @@
 # SD Wire test cases documentation
 
-## Test cases common documentation
-
-**Glossary**
+## Glossary
 
 * TS - Test Server
-* DUT - Device under test
+* DUT - Device Under Test
+
+## Test cases common documentation
 
 **Test setup**
 
 1. Compiled test environment in accordance with
     [SDWire test stand](/docs/sd-wire-test-stand.md)
 
-## SDWire_001 Device recognition
+## SDWire_001 SDWire recognition
 
 **Test description**
 
@@ -26,7 +26,7 @@ Server.
 
 **Test steps**
 
-1. Login to the TS.
+1. Login into the TS by using the proper login and password.
 1. Run in the TS terminal the following command:
 
     ```bash
@@ -35,7 +35,11 @@ Server.
 
 **Expected result**
 
-The output should contain information about detected SDWire. Example output:
+The output should contain information about detected SDWire. The output of the
+command should show, that the Product is `FT200X USB I2C` and the Manufacturer
+is `FTDI`.
+
+Example output:
 
     ```bash
     (...)
@@ -50,12 +54,12 @@ The output should contain information about detected SDWire. Example output:
     (...)
     ```
 
-## SDWire_002 SDWire configure and list
+## SDWire_002 SDWire configuration and reading
 
 **Test description**
 
-This test aims to verify that the connected SDWire is configurable and available
-in the list.
+This test aims to verify that the configuration procedure for the SDWire works
+correctly and, after the procedure, the test device is readable.
 
 **Test setup**
 
@@ -64,7 +68,7 @@ in the list.
 
 **Test steps**
 
-1. Login to the TS.
+1. Login into the TS by using the proper login and password.
 1. Run in the TS terminal the following command:
 
     ```bash
@@ -91,25 +95,23 @@ in the list.
 
 **Expected result**
 
-The output of the last command should be similar to the below:
+The output of the last command should contain information about founding at
+least one FTDI device.
+
+Example output:
 
 ```bash
 Number of FTDI devices found: 1
 Dev: 0, Manufacturer: SRPOL, Serial: SDWIRE, Description: sd-wire
 ```
 
-Unwanted output:
-
-```bash
-Number of FTDI devices found: 0
-```
-
-## SDWire_003 SDWire connects to the TS
+## SDWire_003 SDWire connecting to the Test Server
 
 **Test description**
 
-This test aims to verify that the connected SDWire can be connected to the Test
-Server.
+This test aims to verify that the connecting to the TS procedure for the
+SDWire works correctly and, after the procedure, the test device is manageable
+from the TS.
 
 **Test setup**
 
@@ -118,7 +120,7 @@ Server.
 
 **Test steps**
 
-1. Login to the TS.
+1. Login into the TS by using the proper login and password.
 1. Run in the TS terminal the following command:
 
     ```bash
@@ -133,7 +135,10 @@ Server.
 
 **Expected result**
 
-The output should be equal:
+The output of the last command should contain information that the SDWire is
+connected to the TS.
+
+Example output:
 
 ```bash
 SD connected to: TS
@@ -143,7 +148,8 @@ SD connected to: TS
 
 **Test description**
 
-This test aims to verify that the connected SDWire can flash an SD card.
+This test aims to verify that the flashing mounted in the SDWire SD Card
+procedure works correctly.
 
 **Test setup**
 
@@ -152,7 +158,7 @@ This test aims to verify that the connected SDWire can flash an SD card.
 
 **Test steps**
 
-1. Login to the TS.
+1. Login into the TS by using the proper login and password.
 1. Run in the TS terminal the following commands:
 
     ```bash
@@ -167,7 +173,10 @@ This test aims to verify that the connected SDWire can flash an SD card.
 
 **Expected result**
 
-The output should be similar to this below:
+The output of the command should contain information that the SD Card has been
+flashed with the chosen image.
+
+Example output:
 
 ```bash
 bmaptool: info: no bmap given, copy entire image to '/dev/sda'
@@ -176,11 +185,13 @@ bmaptool: info: synchronizing '/dev/sda'
 bmaptool: info: copying time: 1m 34.2s, copying speed 11.1 MiB/sec
 ```
 
-## SDWire_005 SDWire connects to the DUT
+## SDWire_005 SDWire connecting to the Device Under Test
 
 **Test description**
 
-This test aims to verify that the connected SDWire can be connected to the DUT.
+This test aims to verify that the connecting to the DUT procedure for the
+SDWire works correctly and, after the procedure, the test device is not
+manageable from the TS.
 
 **Test setup**
 
@@ -189,7 +200,7 @@ This test aims to verify that the connected SDWire can be connected to the DUT.
 
 **Test steps**
 
-1. Login to the TS.
+1. Login into the TS by using the proper login and password.
 1. Run in the TS terminal the following command:
 
     ```bash
@@ -204,17 +215,21 @@ This test aims to verify that the connected SDWire can be connected to the DUT.
 
 **Expected result**
 
-The output should be equal:
+The output of the last command should contain information that the SDWire is
+connected to the DUT.
+
+Example output:
 
 ```bash
 SD connected to: DUT
 ```
 
-## SDWire_006 Booting OS from SDWire
+## SDWire_006 OS booting form card mounted in the SDWire
 
 **Test description**
 
-This test aims to verify that the DUT can boot after flashing.
+This test aims to verify that the DUT boots properly after flashing SD Card by
+using SDWire.
 
 **Test setup**
 
@@ -223,7 +238,7 @@ This test aims to verify that the DUT can boot after flashing.
 
 **Test steps**
 
-1. Login to the TS.
+1. Login into the TS by using the proper login and password.
 1. Power on the DUT by running the following command in the TS terminal:
 
     ```bash
