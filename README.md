@@ -19,7 +19,7 @@ Virtualenv Initialization
 
 ```bash
 git clone git@gitlab.com:3mdeb/rte/hardware-presale-validation.git
-cd open-firmware-rte
+cd hardware-presale-validation
 git submodule update --init --checkout
 virtualenv -p $(which python3) robot-venv
 source robot-venv/bin/activate
@@ -40,7 +40,7 @@ To run testing script dedicated for the currently testing platform run in
 terminal with active virtual environment the following command:
 
 ```bash
-robot -L TRACE -v stand_ip:$STAND_IP tested_platform:$TESTED_PLATFORM scripts/$SCRIPT
+robot -L TRACE -v stand_ip:$STAND_IP -v tested_platform:$TESTED_PLATFORM scripts/$SCRIPT
 ```
 
 Where:
