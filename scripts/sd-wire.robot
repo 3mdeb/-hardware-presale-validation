@@ -16,58 +16,37 @@ Resource    ../keywords.robot
 *** Test Cases ***
 
 SDWire_001 Device recognition
-    [Documentation]    This test aims to verify that the connected SD wire is
+    [Documentation]    This test aims to verify that the connected SDWire is
     ...                recognizable by the Test Server.
-    ${output}=    SSHLibrary.Execute Command    dmesg | grep "usb ${usb_port_number}"
-    ${output}=    Fetch From Right    ${output}    new full-speed USB device
-    Should Contain Any    ${output}    sd-wire
-    Set Global Variable    ${dmesg_output}    ${output}
+    ${output}=    SDWire Diagnosis
+    Set Suite Variable    ${dmesg_output}    ${output}
 
-SDWire_002 SD-wire configure and list
-    [Documentation]    This test aims to verify that the connected SD wire is
+SDWire_002 SDWire configure and list
+    [Documentation]    This test aims to verify that the connected SDWire is
     ...                configurable and available in the list.
-    ${temp}=    Get Lines Containing String    ${dmesg_output}   usb ${usb_port_number}: New USB device found
-    ${vendor}=    Evaluate    "${temp.split()[8]}"
-    ${product}=    Evaluate    "${temp.split()[9]}"
-    ${vendor}=    Fetch From Left    ${vendor}    ,
-    ${vendor}=    Fetch From Right    ${vendor}    =
-    ${product}=    Fetch From Left    ${product}    ,
-    ${product}=    Fetch From Right    ${product}    =
-    ${temp}=    Get Lines Containing String    ${dmesg_output}   usb ${usb_port_number}: SerialNumber: 
-    ${serial_device}=    Evaluate    "${temp.split()[5]}"
-    SSHLibrary.Execute Command    sd-mux-ctrl --device-serial=${serial_device} --vendor=0x${vendor} --product=0x${product} --device-type=sd-wire --set-serial=SDWIRE
-    ${output}=    SSHLibrary.Execute Command    sd-mux-ctrl --list
-    Should Contain    ${output}    Number of FTDI devices found: 1
-    Should Contain    ${output}    SDWIRE
+    ${serial_device}    ${vendor}    ${product}    SDWire Identification    ${dmesg_output}
+    Configure SDWire    ${serial_device}    ${vendor}    ${product}
+    Check SDWire Configuration
 
-SDWire_003 SD-wire connects to the TS
-    [Documentation]    This test aims to verify that the connected SD wire can
+SDWire_003 SDWire connects to the TS
+    [Documentation]    This test aims to verify that the connected SDWire can
     ...                be connected to the Test Server.
-    SSHLibrary.Execute Command    sd-mux-ctrl --device-serial=SDWIRE --ts
-    ${output}=    SSHLibrary.Execute Command    sd-mux-ctrl --device-serial=SDWIRE --status
-    Should Contain    ${output}    TS
+    Check Connection To TS
 
 SDWire_004 SD card flashing
-    [Documentation]    This test aims to verify that the connected SD wire can
-    ...                flash SD card.
-    SSHLibrary.Write    bmaptool copy --nobmap ${RTE_image_name} /dev/sda
-    SSHLibrary.Set Client Configuration    timeout=120s
-    SSHLibrary.Read Until    synchronizing
-    SSHLibrary.Set Client Configuration    timeout=60s
+    [Documentation]    This test aims to verify that the connected SDWire can
+    ...                flash  an SD card.
+    Flash SD card
 
-SDWire_005 SD-wire connects to the DUT
-    [Documentation]    This test aims to verify that the connected SD wire can
+SDWire_005 SDWire connects to the DUT
+    [Documentation]    This test aims to verify that the connected SDWire can
     ...                be connected to the DUT.
-    SSHLibrary.Execute Command    sd-mux-ctrl --device-serial=SDWIRE --dut
-    ${output}=    SSHLibrary.Execute Command    sd-mux-ctrl --device-serial=SDWIRE --status
-    Should Contain    ${output}    DUT
+    Check Connection To DUT
 
-SDWire_006 Booting OS from SD-wire
+SDWire_006 Booting OS from SDWire
     [Documentation]    This test aims to verify that the DUT can boot after
     ...                flashing.
-    SSHLibrary.Execute Command    ./rte_ctrl -rel
-    SSHLibrary.Write    minicom -D /dev/ttyUSB0
-    SSHLibrary.Read Until    login:
-    SSHLibrary.Close All Connections
-    Open Connection And Log In
-    SSHLibrary.Execute Command    ./rte_ctrl -rel
+    Change Relay State
+    Wait For Login Prompt In OS
+    Close And Open Connection
+    Change Relay State
