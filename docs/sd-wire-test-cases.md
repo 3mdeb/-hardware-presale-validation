@@ -1,17 +1,41 @@
 # SD Wire test cases documentation
 
-TS - Test Server
-DUT - Device under test
+## Test cases common documentation
+
+**Glossary**
+
+* TS - Test Server
+* DUT - Device under test
+
+**Test setup**
+
+1. Compiled test environment in accordance with
+    [SDWire test stand](/docs/sd-wire-test-stand.md)
 
 ## SDWire_001 Device recognition
 
+**Test description**
+
+This test aims to verify that the connected SDWire is recognizable by the Test
+Server.
+
+**Test setup**
+
+1. Proceed with the
+    [Test cases common documentation](#test-cases-common-documentation) section.
+
+**Test steps**
+
+1. Login to the TS.
 1. Run in the TS terminal the following command:
 
     ```bash
     dmesg
     ```
 
-1. The output should contain information about detected SDWire. Example output:
+**Expected result**
+
+The output should contain information about detected SDWire. Example output:
 
     ```bash
     (...)
@@ -26,10 +50,21 @@ DUT - Device under test
     (...)
     ```
 
-1. Save output for the next tests.
+## SDWire_002 SDWire configure and list
 
-## SDWire_002 SD-wire configure and list
+**Test description**
 
+This test aims to verify that the connected SDWire is configurable and available
+in the list.
+
+**Test setup**
+
+1. Proceed with the
+    [Test cases common documentation](#test-cases-common-documentation) section.
+
+**Test steps**
+
+1. Login to the TS.
 1. Run in the TS terminal the following command:
 
     ```bash
@@ -54,21 +89,36 @@ DUT - Device under test
     sudo sd-mux-ctrl --list
     ```
 
-1. The output of the command above should be similar to this below:
+**Expected result**
 
-    ```bash
-    Number of FTDI devices found: 1
-    Dev: 0, Manufacturer: SRPOL, Serial: SDWIRE, Description: sd-wire
-    ```
+The output of the last command should be similar to the below:
 
-    Unwanted output:
+```bash
+Number of FTDI devices found: 1
+Dev: 0, Manufacturer: SRPOL, Serial: SDWIRE, Description: sd-wire
+```
 
-    ```bash
-    Number of FTDI devices found: 0
-    ```
+Unwanted output:
 
-## SDWire_003 SD-wire connects to the TS
+```bash
+Number of FTDI devices found: 0
+```
 
+## SDWire_003 SDWire connects to the TS
+
+**Test description**
+
+This test aims to verify that the connected SDWire can be connected to the Test
+Server.
+
+**Test setup**
+
+1. Proceed with the
+    [Test cases common documentation](#test-cases-common-documentation) section.
+
+**Test steps**
+
+1. Login to the TS.
 1. Run in the TS terminal the following command:
 
     ```bash
@@ -81,15 +131,28 @@ DUT - Device under test
     sudo sd-mux-ctrl --device-serial=<serial_device> --status
     ```
 
-1. The output should be equal:
+**Expected result**
 
-    ```bash
-    USB connected to: TS
-    SD connected to: TS
-    ```
+The output should be equal:
+
+```bash
+SD connected to: TS
+```
 
 ## SDWire_004 SD card flashing
 
+**Test description**
+
+This test aims to verify that the connected SDWire can flash an SD card.
+
+**Test setup**
+
+1. Proceed with the
+    [Test cases common documentation](#test-cases-common-documentation) section.
+
+**Test steps**
+
+1. Login to the TS.
 1. Run in the TS terminal the following commands:
 
     ```bash
@@ -102,17 +165,31 @@ DUT - Device under test
     sudo bmaptool copy --nobmap core-image-minimal-orange-pi-zero-v0.7.3.wic.gz /dev/sda
     ```
 
-1. The output should be similar to this below:
+**Expected result**
 
-    ```bash
-    bmaptool: info: no bmap given, copy entire image to '/dev/sda'
-    \
-    bmaptool: info: synchronizing '/dev/sda'
-    bmaptool: info: copying time: 1m 34.2s, copying speed 11.1 MiB/sec
-    ```
+The output should be similar to this below:
 
-## SDWire_005 SD-wire connects to the DUT
+```bash
+bmaptool: info: no bmap given, copy entire image to '/dev/sda'
+\
+bmaptool: info: synchronizing '/dev/sda'
+bmaptool: info: copying time: 1m 34.2s, copying speed 11.1 MiB/sec
+```
 
+## SDWire_005 SDWire connects to the DUT
+
+**Test description**
+
+This test aims to verify that the connected SDWire can be connected to the DUT.
+
+**Test setup**
+
+1. Proceed with the
+    [Test cases common documentation](#test-cases-common-documentation) section.
+
+**Test steps**
+
+1. Login to the TS.
 1. Run in the TS terminal the following command:
 
     ```bash
@@ -125,20 +202,40 @@ DUT - Device under test
     sudo sd-mux-ctrl --device-serial=<serial_device> --status
     ```
 
-1. The output should be equal:
+**Expected result**
+
+The output should be equal:
+
+```bash
+SD connected to: DUT
+```
+
+## SDWire_006 Booting OS from SDWire
+
+**Test description**
+
+This test aims to verify that the DUT can boot after flashing.
+
+**Test setup**
+
+1. Proceed with the
+    [Test cases common documentation](#test-cases-common-documentation) section.
+
+**Test steps**
+
+1. Login to the TS.
+1. Power on the DUT by running the following command in the TS terminal:
 
     ```bash
-    USB connected to: DUT
-    SD connected to: DUT
+    ./rte_ctrl -rel
     ```
 
-## SDWire_006 Booting OS from SD-wire
-
-1. Power on the DUT.
-1. Run the following command to get the output form :
+1. Run the following command to get the output from the DUT:
 
     ```bash
     minicom -D /dev/ttyUSB0
     ```
 
-1. The DUT should properly boot to the `login` phrase.
+**Expected result**
+
+The DUT should properly boot to the `login` phrase.
