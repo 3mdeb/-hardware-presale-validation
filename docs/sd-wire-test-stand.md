@@ -29,25 +29,26 @@ This documentation should be used in one of two situations:
 
 ## RTE - Test Server setup
 
-The following section of the documentation describes the method of configure
+The following section of the documentation describes the method of configuring
 RTE that has been used as the Test Server.
 
 ### Required elements
 
 1. [RTE HAT with Orange Pi Zero and SD card](https://3mdeb.com/shop/open-source-hardware/open-source-hardware-3mdeb/rte/)
-1. 5V 2A micro USB power supply for OPi board.
+1. 5V 2A micro USB power supply for board.
 1. RJ45 Ethernet cable (to connect device to the local network).
 1. UART/USB converter (or RS232 null modem cable or 3/5 jumper wires).
 
-### Preparing image for the device
+### Preparing an image for the device
 
 1. Download the latest Armbian stable version from the
     [Project site](https://www.armbian.com/orange-pi-zero/).
 1. Flash the SD card using `bmaptool` or `balenaEtcher`.
     * to do this by `balenaEtcher` go to the [producer site][balena]
-    and follow his procedure how to download and flash SD card
+    and follow his procedure on how to download and flash the SD card
     * to do this by `bmaptool` reproduce the following steps:
-        - install bmaptool by opening terminal and typing the following command:
+        - install bmaptool by opening the terminal and typing the following
+            command:
 
             ```bash
             sudo apt install bmap-tools
@@ -88,8 +89,8 @@ RTE that has been used as the Test Server.
     ```
 
     > Substitute `<x>` with the device number corresponding to your USB-UART
-    > Converter for example `/dev/ttyUSB0`. The `dmesg` command allows to
-    > identify the latest connected devices.
+    > Converter for example `/dev/ttyUSB0`. The `dmesg` command allows for
+    > identyfing the latest connected devices.
 
 1. Plug the power supply into the RTE J17 Micro-USB slot.
 1. Login into the device by using the default credentials:
@@ -113,18 +114,18 @@ RTE that has been used as the Test Server.
     #dns-nameservers 1.1.1.1 1.0.0.1
     ```
 
-    The `XXX` field should be replaced by three-digit number, chosen in such
+    The `XXX` field should be replaced by a three-digit number, chosen in such
     a way that it corresponds to a free address in the local network.
 
 1. Save changes and reboot the device.
 1. Login into the device by using the above-mentioned credentials.
-1. Execute the following command to see if IP address is corretly:
+1. Execute the following command to see if IP address is correct:
 
     ```bash
     ip a
     ```
 
-    Output of the above command should looks as follows:
+    The output of the above command should look as follows:
 
     ```bash
     3: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
@@ -142,49 +143,31 @@ RTE that has been used as the Test Server.
     ping google.com
     ```
 
-    Output of the above command should looks as follows:
+    The output of the above command should look as follows:
 
     ```bash
     PING google.com (216.58.209.14) 56(84) bytes of data.
     64 bytes from waw02s18-in-f14.1e100.net (216.58.209.14): icmp_seq=1 ttl=55 time=19.5 ms
     ```
 
-1. Submit address reservation request for the device to `Amado`.
-1. Log out from RTE by closing minicom connection.
+1. Submit the address reservation requests for the device to `Amado`.
+1. Log out from RTE by closing the minicom connection.
 
 ## RTE - Device Under Test setup
+
+The following section of the documentation describes the method of configuring
+RTE that has been used as the Device Under Test.
 
 ### Required elements
 
 1. [RTE HAT with Orange Pi Zero and SD card](https://3mdeb.com/shop/open-source-hardware/open-source-hardware-3mdeb/rte/)
-1. 5V 2A micro USB power supply for OPi board.
+1. 5V 2A micro USB power supply for board.
 1. UART/USB converter (or RS232 null modem cable or 3/5 jumper wires).
 
-### Preparing image for the device
+### Prpearing device
 
-1. Download the latest Armbian stable version from the
-    [Project site](https://www.armbian.com/orange-pi-zero/).
-1. Flash the SD card using `bmaptool` or `balenaEtcher`.
-    * to do this by `balenaEtcher` go to the [producer site][balena]
-    and follow his procedure how to download and flash SD card
-    * to do this by `bmaptool` reproduce the following steps:
-        - install bmaptool by opening terminal and typing the following command:
-
-            ```bash
-            sudo apt install bmap-tools
-            ```
-
-        - create the bmap by typing the following command:
-
-            ```bash
-            bmaptool create /path/to/your/image > /path/where/you/want/bmap/file/saved/bmapfilename.bmap
-            ```
-
-        - flash image to the SD card by typing the following command:
-
-            ```bash
-            sudo bmaptool copy --bmap ~/path/where/your/bmap/file/is/located /path/where/your/image/is/located /path/to/memory/device
-            ```
+Prepare device in according to the
+[documentation](https://docs.dasharo.com/transparent-validation/rte/v1.1.0/quick-start-guide/#preparation-of-rte)
 
 ## Combining and finalizing setup
 
@@ -193,7 +176,7 @@ RTE that has been used as the Test Server.
     ![Armbian RTE](images/sdwire-armbian-top.jpg)
 
 1. Connect Ethernet cable from switch/modem to Ethernet port
-    (CYAN on image above)
+    (CYAN on image above).
 
 1. Make connections on `meta-rte` RTE acordingly to below images:
 
