@@ -4,9 +4,11 @@
 
 1. __2x__ RTE HAT.
 1. __2x__ Orange Pi Zero with soldered 26-pin header.
-1. __2x__ 5V 2A micro USB power supply for OPi board.
-1. __3x__ Micro SD card (2x for Orange Pi Zero and 1x for SDWire).
-1. __2x__ RJ45 Ethernet cable.
+1. __2x__ Micro SD card.
+1. RJ45 Ethernet cable.
+1. 5V 2A micro USB power supply for OPi board.
+1. 5V 2A DC-jack power supply for OPi board.
+1. DC-jack (male) - DC-jack (male) connector.
 1. Micro-USB --> USB cable
 1. UART/USB converter or RS232 null modem cable (or 3/5 jumper wires).
 1. SDWire
@@ -32,7 +34,7 @@
     sudo dd if=PATH_TO_IMAGE of=/dev/sdc status=progress bs=4M
     ```
 
-1. Plug card into Orange Pi.
+1. Do not plug SD card into Orange Pi yet.
 
 ### RTE connections
 
@@ -119,7 +121,7 @@ It's important to say that setup for `Armbian` is similar to setup for
     sudo dd if=PATH_TO_IMAGE of=/dev/sdc status=progress bs=4M
     ```
 
-1. Plug card into Orange Pi.
+1. Plug SD card into Orange Pi.
 
 ### RTE connections
 
@@ -302,6 +304,8 @@ open-source libFTDI library.
     - run the following commands one by one:
 
         ```bash
+        cmake
+        ```bash
         cmake ..
         make
         ```
@@ -330,4 +334,16 @@ open-source libFTDI library.
 
 ## Combining and finalizing setup
 
-<!-- Work in progress -->
+1. Make connections on `Armbian` RTE acordingly to below image:
+
+    ![Armbian RTE](images/sdwire-armbian-top.jpg)
+
+1. Connect Ethernet cable from switch/modem to Ethernet port
+    (CYAN on image above)
+
+1. Make connections on `meta-rte` RTE acordingly to below images:
+
+    ![meta RTE top](images/sdwire-meta-rte-top.jpg)
+    ![meta rte botttom](images/sdwire-meta-rte-bottom.jpg)
+
+1. Setup should be fully functional from now on.
