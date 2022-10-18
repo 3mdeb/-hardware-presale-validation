@@ -36,7 +36,7 @@ RTE that has been used as the Test Server.
 
 1. [RTE HAT with Orange Pi Zero and SD card](https://3mdeb.com/shop/open-source-hardware/open-source-hardware-3mdeb/rte/)
 1. 5V 2A micro USB power supply for board.
-1. RJ45 Ethernet cable (to connect device to the local network).
+1. RJ45 Ethernet cable (to connect the device to the local network).
 1. UART/USB converter (or RS232 null modem cable or 3/5 jumper wires).
 
 ### Preparing an image for the device
@@ -90,7 +90,7 @@ RTE that has been used as the Test Server.
 
     > Substitute `<x>` with the device number corresponding to your USB-UART
     > Converter for example `/dev/ttyUSB0`. The `dmesg` command allows for
-    > identyfing the latest connected devices.
+    > identifying the latest connected devices.
 
 1. Plug the power supply into the RTE J17 Micro-USB slot.
 1. Login into the device by using the default credentials:
@@ -99,7 +99,7 @@ RTE that has been used as the Test Server.
 
 1. Set static ip for the Test Server. To do this edit the file
     `/lib/systemd/network/50-dhcp.network` (i.e. by using vi). The file should
-    looks as follows:
+    look as follows:
 
     ```bash
     # Ethernet adapter 0
@@ -164,23 +164,23 @@ RTE that has been used as the Device Under Test.
 1. 5V 2A micro USB power supply for board.
 1. UART/USB converter (or RS232 null modem cable or 3/5 jumper wires).
 
-### Prpearing device
+### Preparing device
 
-Prepare device in according to the
+Prepare the device according to the
 [documentation](https://docs.dasharo.com/transparent-validation/rte/v1.1.0/quick-start-guide/#preparation-of-rte)
 
-## Combining and finalizing setup
+## Combining and finalizing the setup
 
-1. Make connections on `Armbian` RTE acordingly to below image:
+1. Make connections on `Armbian` RTE according to below the image:
 
     ![Armbian RTE](images/sdwire-armbian-top.jpg)
 
-1. Connect Ethernet cable from switch/modem to Ethernet port
-    (CYAN on image above).
+1. Connect the Ethernet cable from the switch/modem to the Ethernet port
+    (CYAN on the image above).
 
-1. Make connections on `meta-rte` RTE acordingly to below images:
+1. Make connections on `meta-rte` RTE according to the below images:
 
     ![meta RTE top](images/sdwire-meta-rte-top.jpg)
     ![meta rte botttom](images/sdwire-meta-rte-bottom.jpg)
 
-1. Setup should be fully functional from now on.
+1. The setup should be fully functional from now on.
