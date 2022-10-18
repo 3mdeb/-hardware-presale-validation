@@ -1,336 +1,190 @@
 # SD Wire test stand documentation
 
-## Summary of required elements
+The following documentation describes the method of construction of the test
+stand dedicated to the validation of newly SDwire(s).
 
-1. __2x__ RTE HAT.
-1. __2x__ Orange Pi Zero with soldered 26-pin header.
-1. __2x__ Micro SD card.
+It contains information about:
+* which elements are necessary to build the stand,
+* how to prepare all elements of the test stand,
+* how to connect all of the elements of the test stand.
+
+This documentation should be used in one of two situations:
+* by testing persons, to familiarize themselves with the test stand
+    construction,
+* by members of the TA Team (or other delegated people) to improve and/or
+    construct other test stands.
+
+## Prerequisites
+
+1. **2x** [RTE HAT with Orange Pi Zero and SD card](https://3mdeb.com/shop/open-source-hardware/open-source-hardware-3mdeb/rte/)
 1. RJ45 Ethernet cable.
-1. 5V 2A micro USB power supply for OPi board.
-1. 5V 2A DC-jack power supply for OPi board.
+1. 5V 2A micro USB power supply for RTE board.
+1. 5V 2A DC-jack power supply for RTE board.
 1. DC-jack (male) - DC-jack (male) connector.
 1. Micro-USB --> USB cable
 1. UART/USB converter or RS232 null modem cable (or 3/5 jumper wires).
-1. SDWire
 
-## RTE with meta-rte setup
+> Note: in the equipment of the test stand the tested device (SDWire) is
+    not included.
+
+## RTE - Test Server setup
+
+The following section of the documentation describes the method of configure
+RTE that has been used as the Test Server.
 
 ### Required elements
 
-1. RTE HAT.
-1. Orange Pi Zero with soldered 26-pin header.
+1. [RTE HAT with Orange Pi Zero and SD card](https://3mdeb.com/shop/open-source-hardware/open-source-hardware-3mdeb/rte/)
 1. 5V 2A micro USB power supply for OPi board.
-1. Micro SD card for Orange Pi Zero.
-1. RJ45 Ethernet cable (for RTE and DUT).
-1. UART/USB converter or RS232 null modem cable (or 3/5 jumper wires).
+1. RJ45 Ethernet cable (to connect device to the local network).
+1. UART/USB converter (or RS232 null modem cable or 3/5 jumper wires).
 
-### Installing OS on Orange Pi
+### Preparing image for the device
 
-1. Download the `meta-rte` image from [3mdeb cloud](https://cloud.3mdeb.com/).
-1. Extract downloaded image.
-1. Flash micro SD card, e.g. using:
+1. Download the latest Armbian stable version from the
+    [Project site](https://www.armbian.com/orange-pi-zero/).
+1. Flash the SD card using `bmaptool` or `balenaEtcher`.
+    * to do this by `balenaEtcher` go to the [producer site][balena]
+    and follow his procedure how to download and flash SD card
+    * to do this by `bmaptool` reproduce the following steps:
+        - install bmaptool by opening terminal and typing the following command:
 
-    ```bash
-    sudo dd if=PATH_TO_IMAGE of=/dev/sdc status=progress bs=4M
-    ```
+            ```bash
+            sudo apt install bmap-tools
+            ```
 
-1. Do not plug SD card into Orange Pi yet.
+        - create the bmap by typing the following command:
 
-### RTE connections
+            ```bash
+            bmaptool create /path/to/your/image > /path/where/you/want/bmap/file/saved/bmapfilename.bmap
+            ```
 
-1. Plug RTE to Orange Pi, then connect 5V power supply directly to OPi or J17
-    connector on RTE.
-1. Connect Ethernet cable to OPi.
-1. Set serial connection wit RTE - connect UART/USB converter between PC and RTE
-    (J2 header with pins GND, RX, TX)  and type on your PC terminal:
+        - flash image to the SD card by typing the following command:
 
-    ```bash
-    sudo minicom -D /dev/ttyUSB0 -o -b 115200
-    ```
+            ```bash
+            sudo bmaptool copy --bmap ~/path/where/your/bmap/file/is/located /path/where/your/image/is/located /path/to/memory/device
+            ```
 
-1. Log in to system:
+### RTE Test Server setup
 
-    ```bash
-    login: root
-    password: meta-rte
-    ```
+1. Insert Orange Pi into RTE.
+1. Insert SD card into Orange Pi.
+1. Connect the ethernet cable to Orange Pi.
+1. Plug the USB-UART converter into your computer and connect its pins with
+    [RTE J2 Header](../specification/#uart0-header). (you may need a
+    USB extension cable)
 
-1. Set static ip for RTE - while connected with RTE via minicom, edit
-    `/lib/systemd/network/50-dhcp.network` (using vi):
+    |UART Converter | RTE J2 Header|
+    |:-------------:|:------------:|
+    | GND           | GND          |
+    | TXD           | RX           |
+    | RXD           | TX           |
 
-    ```bash
-    [Match]
-    Name=eth0
-    
-    [Network]
-    DNS=192.168.3.1
-    Address=192.168.3.XX
-    Gateway=192.168.3.1
-    ```
-
-    where `XX` is chosen static IP for your RTE (be sure that this IP is not
-    taken by someone else). Then save changed file, reboot RTE and after logging
-    again, type `ifconfig` and check if "eth0/inet addr" is the same as set in
-    previous step. If everything is correct, you can now use ssh connection
-    with known ip address.
-
-### RTE configuration
-
-1. After acquired IP address, we can connect to RTE's OS via SSH by running
-    ssh USER@RTE_IP, for example:
+1. Open the serial connection with RTE from your PC using a previously connected
+    USB-UART converter by executing the following command:
 
     ```bash
-    ssh root@192.168.3.105
+    sudo minicom -D /dev/ttyUSB<x>
     ```
 
-1. After successful connection, check if ser2net redirection is configured.
-    Type:
+    > Substitute `<x>` with the device number corresponding to your USB-UART
+    > Converter for example `/dev/ttyUSB0`. The `dmesg` command allows to
+    > identify the latest connected devices.
+
+1. Plug the power supply into the RTE J17 Micro-USB slot.
+1. Login into the device by using the default credentials:
+    - Login: `root`
+    - Password: `armbian`
+
+1. Set static ip for the Test Server. To do this edit the file
+    `/lib/systemd/network/50-dhcp.network` (i.e. by using vi). The file should
+    looks as follows:
 
     ```bash
-    root@orange-pi-zero:~# cat /etc/ser2net.conf
+    # Ethernet adapter 0
+    auto eth0
+    allow-hotplug eth0
+    #no-auto-down eth0
+    iface eth0 inet static
+    address 192.168.4.XXX
+    netmask 255.255.255.0
+    gateway 192.168.4.1
+    dns-nameservers 192.168.4.1
+    #dns-nameservers 1.1.1.1 1.0.0.1
     ```
 
-1. Output should contain:
+    The `XXX` field should be replaced by three-digit number, chosen in such
+    a way that it corresponds to a free address in the local network.
+
+1. Save changes and reboot the device.
+1. Login into the device by using the above-mentioned credentials.
+1. Execute the following command to see if IP address is corretly:
 
     ```bash
-    13541:telnet:600:/dev/ttyS1:115200 8DATABITS NONE 1STOPBIT
-    13542:telnet:600:/dev/ttyUSB0:115200 8DATABITS NONE 1STOPBIT
+    ip a
     ```
 
-## RTE with Armbian setup
+    Output of the above command should looks as follows:
 
-It's important to say that setup for `Armbian` is similar to setup for
-`meta-rte`, but there are several key differences.
+    ```bash
+    3: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 02:42:66:21:f7:ea brd ff:ff:ff:ff:ff:ff
+    inet 192.168.4.XXX/24 brd 192.168.10.255 scope global dynamic eth0
+       valid_lft 595628sec preferred_lft 595628sec
+    inet6 fe80::42:66ff:fe21:f7ea/64 scope link 
+       valid_lft forever preferred_lft forever
+    ```
+
+1. Check the correctness of the connection to the Internet by executing the
+    following command:
+
+    ```bash
+    ping google.com
+    ```
+
+    Output of the above command should looks as follows:
+
+    ```bash
+    PING google.com (216.58.209.14) 56(84) bytes of data.
+    64 bytes from waw02s18-in-f14.1e100.net (216.58.209.14): icmp_seq=1 ttl=55 time=19.5 ms
+    ```
+
+1. Submit address reservation request for the device to `Amado`.
+1. Log out from RTE by closing minicom connection.
+
+## RTE - Device Under Test setup
 
 ### Required elements
 
-1. RTE HAT.
-1. Orange Pi Zero with soldered 26-pin header.
+1. [RTE HAT with Orange Pi Zero and SD card](https://3mdeb.com/shop/open-source-hardware/open-source-hardware-3mdeb/rte/)
 1. 5V 2A micro USB power supply for OPi board.
-1. Micro SD card for Orange Pi Zero.
-1. RJ45 Ethernet cable (for RTE and DUT).
-1. UART/USB converter or RS232 null modem cable (or 3/5 jumper wires).
+1. UART/USB converter (or RS232 null modem cable or 3/5 jumper wires).
 
-### Installing OS on Orange Pi
+### Preparing image for the device
 
-1. Download the `Armbian` image from [3mdeb cloud](https://cloud.3mdeb.com/).
-1. Extract downloaded image.
-1. Flash micro SD card, e.g. using:
+1. Download the latest Armbian stable version from the
+    [Project site](https://www.armbian.com/orange-pi-zero/).
+1. Flash the SD card using `bmaptool` or `balenaEtcher`.
+    * to do this by `balenaEtcher` go to the [producer site][balena]
+    and follow his procedure how to download and flash SD card
+    * to do this by `bmaptool` reproduce the following steps:
+        - install bmaptool by opening terminal and typing the following command:
 
-    ```bash
-    sudo dd if=PATH_TO_IMAGE of=/dev/sdc status=progress bs=4M
-    ```
+            ```bash
+            sudo apt install bmap-tools
+            ```
 
-1. Plug SD card into Orange Pi.
+        - create the bmap by typing the following command:
 
-### RTE connections
+            ```bash
+            bmaptool create /path/to/your/image > /path/where/you/want/bmap/file/saved/bmapfilename.bmap
+            ```
 
-1. Plug RTE to Orange Pi, then connect 5V power supply directly to OPi or J17
-    connector on RTE.
-1. Connect Ethernet cable to OPi.
-1. Set serial connection wit RTE - connect UART/USB converter between PC and RTE
-    (J2 header with pins GND, RX, TX)  and type on your PC terminal:
+        - flash image to the SD card by typing the following command:
 
-    ```bash
-    sudo minicom -D /dev/ttyUSB0 -o -b 115200
-    ```
-
-1. Log in to system:
-
-    ```bash
-    login: root
-    password: armbian
-    ```
-
-1. Set static ip for RTE - while connected with RTE via minicom, edit
-    `/etc/network/interfaces.d/eth0` file (vim or nano):
-
-    - Back up the /etc/network/interfaces file:
-
-        ```bash
-        cp /etc/network/interfaces /etc/network/interfaces.backup
-        ```
-
-    - Edit it afterwards:
-
-        ```bash
-        sudo nano /etc/network/interfaces
-        ```
-
-    - Copy this Ethernet configuration, where the ‘address’ field contains the
-        static IP address you want to assign to the device:
-
-        ```bash
-        # Ethernet adapter 0
-        auto eth0
-        allow-hotplug eth0
-        #no-auto-down eth0
-        iface eth0 inet static
-        address 192.168.1.100
-        netmask 255.255.255.0
-        gateway 192.168.1.1
-        dns-nameservers 192.168.1.1
-        #dns-nameservers 1.1.1.1 1.0.0.1
-        ```
-
-    - Exit by pressing `Crtl+X` and press `Y` to save the file.
-
-    - If you have a previously configured Ethernet adapter as follows, remove
-        that line from the interfaces file:
-
-        ```bash
-        iface eth0 inet dhcp
-        ```
-
-    - Now you must reboot the system for the changes to take effect:
-
-        ```bash
-        reboot
-        ```
-
-### RTE configuration
-
-1. After acquired IP address, we can connect to RTE's OS via SSH by running
-    ssh USER@RTE_IP, for example:
-
-    ```bash
-    ssh root@192.168.3.105
-    ```
-
-1. After successful connection, check if ser2net redirection is configured.
-    Type:
-
-    ```bash
-    root@orange-pi-zero:~# cat /etc/ser2net.conf
-    ```
-
-1. Output should contain:
-
-    ```bash
-    13541:telnet:600:/dev/ttyS1:115200 8DATABITS NONE 1STOPBIT
-    13542:telnet:600:/dev/ttyUSB0:115200 8DATABITS NONE 1STOPBIT
-    ```
-
-## SDWire setup
-
-### Required elements
-
-1. SDWire
-1. SD card
-1. Micro-USB --> USB cable
-
-### Environment preparation
-
-SDWire has dedicated software which is a simple tool meant to control the
-hardware. Source code of the tool is published on tizen git server. This is
-simple to use, command-line utility software written in C and based on
-open-source libFTDI library.
-
-1. Clone the repository:
-
-    ```bash
-    git clone https://git.tizen.org/cgit/tools/testlab/sd-mux
-    ```
-
-1. Check whether the installation requirements for sd-mux are met:
-
-    - `libftdi1` 1.4 development library is installed. To do this, open the
-        terminal and type the following command:
-
-        ```bash
-        dpkg -L libftdi1-dev
-        ```
-
-        If the library is installed, after typing the above command you will
-        see information about the paths to the library components. * popt
-        development library is installed. To do this, open the terminal and type
-        the following command:
-
-        ```bash
-        dpkg -L libpopt-dev
-        ```
-
-        If the library is installed, after typing the above command you will see
-        information about the paths to the library components. * cmake binary
-        tool is installed. To do this, open the terminal and type the following
-        command:
-
-        ```bash
-        cmake --version
-        ```
-
-        If the tool is installed, after typing the above command you will see
-        information about the installed on your computer cmake version.
-
-1. Install missing libraries and/or tools:
-
-    - `libftdi1` 1.4 development library. To do this, open the terminal and type
-        the following command:
-
-        ```bash
-        sudo apt-get install libftdi1-dev
-        ```
-
-    - `popt` development library. To do this, open the terminal and type the
-        following command:
-
-        ```bash
-        sudo apt-get install libpopt-dev
-        ```
-
-    - `cmake` binary tool. To do this, open the terminal and type the following
-        command:
-
-        ```bash
-        sudo apt-get install cmake
-        ```
-
-1. Enter into sd-mux project directory and reproduce the following steps to
-    build project:
-
-    - open directory in terminal
-    - create `build` directory by the following command:
-
-        ```bash
-        mkdir build
-        ```
-
-    - enter into 'build' directory by the following command:
-
-        ```bash
-        cd build
-        ```
-
-    - run the following commands one by one:
-
-        ```bash
-        cmake
-        ```bash
-        cmake ..
-        make
-        ```
-
-1. In the above-described directory (sd-mux/build) run the following command to
-    build binary:
-
-    ```bash
-    sudo make install
-    ```
-
-    Note, that the above-described command installs binary into
-    `/usr/local/bin`. If you want to install files in directory rather than the
-    default one add an argument to cmake command:
-
-    ```bash
-    cmake -DCMAKE_INSTALL_PREFIX=/usr ..
-    ```
-
-    Then it is obligatory to run again the following commands:
-
-    ```bash
-    make
-    make install
-    ```
+            ```bash
+            sudo bmaptool copy --bmap ~/path/where/your/bmap/file/is/located /path/where/your/image/is/located /path/to/memory/device
+            ```
 
 ## Combining and finalizing setup
 
