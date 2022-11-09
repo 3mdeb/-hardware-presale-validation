@@ -18,7 +18,8 @@ Open Connection And Log In
     Set Global Variable    ${rte_ip}    ${stand_ip}
     SSHLibrary.Open Connection    ${rte_ip}    prompt=~#
     SSHLibrary.Login    ${USERNAME}    ${PASSWORD}
-    REST API Setup    RteCtrl
+    Set Global Variable    ${rte_session_handler}    RteCtrl
+    RTE REST API Setup    ${rte_session_handler}    ${rte_ip}    ${http_port}
     # Serial setup    ${rte_ip}    ${rte_s2n_port}
 
 Close And Open Connection
