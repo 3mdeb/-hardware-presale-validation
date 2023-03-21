@@ -1,8 +1,8 @@
 ***Variables***
 
-${USERNAME}             root
-${PASSWORD}             armbian
-${http_port}            8000
-${rte_s2n_port}         13541
-${usb_port_number}      5-1.2
-${RTE_image_name}       core-image-minimal-orange-pi-zero-v0.7.3.wic.gz
+${test_server_login}                root
+${test_server_password}             armbian
+${test_server_prompt}               root@orangepizero:~#
+${sd_wire_recognition_string}       registered new interface driver uas
+${RTE_image_name}                   core-image-minimal-orange-pi-zero-v0.7.3.wic.gz
+${vendor_product_line}              New USB device found, idVendor
