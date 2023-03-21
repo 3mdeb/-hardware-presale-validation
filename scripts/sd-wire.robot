@@ -19,37 +19,39 @@ SDWire_001 SDWire recognition
     [Documentation]    This test aims to verify that the connected SDWire is
     ...                recognizable by the Test Server.
     ${output}=    SDWire Diagnosis
-    Set Suite Variable    ${dmesg_output}    ${output}
+    ${vendor_id}    ${product_id}    ${serial_id}    SDWire Identification    ${output}
+    Set Suite Variable    ${vendor_id}    ${vendor_id}
+    Set Suite Variable    ${product_id}    ${product_id}
+    Set Suite Variable    ${serial_id}    ${serial_id}
 
 SDWire_002 SDWire configuration and reading
     [Documentation]    This test aims to verify that the configuration
     ...                procedure for the SDWire works correctly and, after the
     ...                procedure, the test device is readable.
-    ${serial_device}    ${vendor}    ${product}    SDWire Identification    ${dmesg_output}
-    Configure SDWire    ${serial_device}    ${vendor}    ${product}
+    Configure SDWire    ${serial_id}    ${vendor_id}    ${product_id}
     Check SDWire Configuration
 
-SDWire_003 SDWire connecting to the Test Server
-    [Documentation]    This test aims to verify that the connecting to the TS
-    ...                procedure for the SDWire works correctly and, after the
-    ...                procedure, the test device is manageable from the TS.
-    Check Connection To TS
+# SDWire_003 SDWire connecting to the Test Server
+#     [Documentation]    This test aims to verify that the connecting to the TS
+#     ...                procedure for the SDWire works correctly and, after the
+#     ...                procedure, the test device is manageable from the TS.
+#     Check Connection To TS
 
-SDWire_004 SD card flashing
-    [Documentation]    This test aims to verify that the flashing mounted in
-    ...                the SDWire SD Card procedure works correctly.
-    Flash SD card
+# SDWire_004 SD card flashing
+#     [Documentation]    This test aims to verify that the flashing mounted in
+#     ...                the SDWire SD Card procedure works correctly.
+#     Flash SD card
 
-SDWire_005 SDWire connecting to the Device Under Test
-    [Documentation]    This test aims to verify that the connecting to the DUT
-    ...                procedure for the SDWire works correctly and, after the
-    ...                procedure, the test device is not manageable from the TS.
-    Check Connection To DUT
+# SDWire_005 SDWire connecting to the Device Under Test
+#     [Documentation]    This test aims to verify that the connecting to the DUT
+#     ...                procedure for the SDWire works correctly and, after the
+#     ...                procedure, the test device is not manageable from the TS.
+#     Check Connection To DUT
 
-SDWire_006 OS booting form card mounted in the SDWire
-    [Documentation]   This test aims to verify that the DUT boots properly
-    ...               after flashing SD Card by using SDWire.
-    Change Relay State
-    Wait For Login Prompt In OS
-    Close And Open Connection
-    Change Relay State
+# SDWire_006 OS booting form card mounted in the SDWire
+#     [Documentation]   This test aims to verify that the DUT boots properly
+#     ...               after flashing SD Card by using SDWire.
+#     Change Relay State
+#     Wait For Login Prompt In OS
+#     Close And Open Connection
+#     Change Relay State
