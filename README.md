@@ -40,16 +40,17 @@ To run testing script dedicated for the currently testing platform run in
 terminal with active virtual environment the following command:
 
 ```bash
-robot -L TRACE -v stand_ip:$STAND_IP -v tested_platform:$TESTED_PLATFORM scripts/$SCRIPT
+robot -L TRACE -v stand_ip:$STAND_IP -v device:$TESTED_DEVICE -v serial_number:$SERIAL_NUMBER scripts/$SCRIPT
 ```
 
 Where:
 $STAND_IP - IP address for test stand dedicated for the tested device
-$TESTED_PLATFORM - name of the tested platform
+$TESTED_DEVICE - name of the tested device
+$SERIAL_NUMBER - name of the requested device serial number
 $SCRIPT - name of the script dedicated for the tested platform
 
 For example, to run test for the SD Wire, the following command should be used:
 
 ```bash
-robot -L TRACE -v stand_ip:192.168.4.217 tested_platform:sd_wire scripts/sd-wire.robot
+robot -L TRACE -v stand_ip:192.168.4.217 device:sd_wire scripts/sd-wire.robot
 ```
