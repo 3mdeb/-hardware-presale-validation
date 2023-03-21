@@ -6,21 +6,18 @@ Prepare Test Suite
     ...                preparing connection with the DUT based on used 
     ...                transmission protocol. Keyword used in all [Suite Setup] 
     ...                sections.
-    IF    '${tested_platform}' == 'sd_wire'    Import Resource    ${CURDIR}/variables/sd-wire-variables.robot
+    ${serial_number_exists}=    Run Keyword And Return Status   Variable Should Exist    ${serial_number}
+    IF    not ${serial_number_exists}    FAIL    \nDevice serial number has not been defined!
+    IF    '${device}' == 'sd_wire'    Import Resource    ${CURDIR}/variables/sd-wire-variables.robot
     ...    ELSE    FAIL    \nUnknown tested platform
     Open Connection And Log In
 
 Open Connection And Log In
     [Documentation]    Open SSH connection and login to session. Setup RteCtrl
     ...                REST API and serial connection with the Device Under Test
-    #Check provided ip
     SSHLibrary.Set Default Configuration    timeout=60 seconds
-    Set Global Variable    ${rte_ip}    ${stand_ip}
-    SSHLibrary.Open Connection    ${rte_ip}    prompt=~#
-    SSHLibrary.Login    ${USERNAME}    ${PASSWORD}
-    Set Global Variable    ${rte_session_handler}    RteCtrl
-    RTE REST API Setup    ${rte_session_handler}    ${rte_ip}    ${http_port}
-    # Serial setup    ${rte_ip}    ${rte_s2n_port}
+    SSHLibrary.Open Connection    ${stand_ip}    prompt=${test_server_prompt}
+    SSHLibrary.Login    ${test_server_login}    ${test_server_password}
 
 Close And Open Connection
     [Documentation]    Close all opened SSH and open SSH connection again.
@@ -42,28 +39,27 @@ Serial setup
 SDWire Diagnosis
     [Documentation]    Check that the SDWire is properly recognized by the
     ...                dmesg command.
-    ${output}=    SSHLibrary.Execute Command    dmesg | grep "usb ${usb_port_number}"
-    ${output}=    Fetch From Right    ${output}    new full-speed USB device
-    Should Contain    ${output}    sd-wire
+    SSHLibrary.Write    dmesg
+    SSHLibrary.Read Until    ${sd_wire_recognition_string}
+    ${output}=    SSHLibrary.Read Until Prompt
+    Should Contain    ${output}    FT200X USB I2C
     [Return]    ${output}
 
 SDWire Identification
     [Documentation]    Identify the connected SDWire.
-    ${device_parameters}=    Get Lines Containing String    ${dmesg_output}   usb ${usb_port_number}: New USB device found
-    ${vendor}=    Evaluate    "${device_parameters.split()[8]}"
-    ${product}=    Evaluate    "${device_parameters.split()[9]}"
-    ${vendor}=    Fetch From Left    ${vendor}    ,
-    ${vendor}=    Fetch From Right    ${vendor}    =
-    ${product}=    Fetch From Left    ${product}    ,
-    ${product}=    Fetch From Right    ${product}    =
-    ${serial_number}=    Get Lines Containing String    ${dmesg_output}   usb ${usb_port_number}: SerialNumber: 
-    ${serial_device}=    Evaluate    "${serial_number.split()[5]}"
-    [Return]    ${serial_device}    ${vendor}    ${product}
+    [Arguments]    ${dmesg_output}
+    ${vendor_product}=    Get Lines Containing String    ${dmesg_output}    ${vendor_product_line}
+    ${serial_number}=    Get Lines Containing String    ${dmesg_output}   SerialNumber:
+    
+    ${vendor_id}=    Fetch From Right    ${vendor_product.split()[-3]}    =
+    ${product_id}=    Fetch From Right    ${vendor_product.split()[-2]}    =
+    ${serial_id}=    Evaluate    "${serial_number.split()[-1]}"
+    [Return]    ${vendor_id}    ${product_id}    ${serial_id}
 
 Configure SDWire
     [Documentation]    Configure SDWire with the given parameters.
-    [Arguments]    ${serial_device}    ${vendor}    ${product}
-    SSHLibrary.Execute Command    sd-mux-ctrl --device-serial=${serial_device} --vendor=0x${vendor} --product=0x${product} --device-type=sd-wire --set-serial=SDWIRE
+    [Arguments]    ${serial_id}    ${vendor_id}    ${product_id}
+    SSHLibrary.Execute Command    sd-mux-ctrl --device-serial=${serial_id} --vendor=0x${vendor_id} --product=0x${product_id} --device-type=sd-wire --set-serial=sd-wire_${serial_number}
 
 Check SDWire Configuration
     [Documentation]    Check that the SDWire is properly configured.
