@@ -29,29 +29,34 @@ SDWire_002 SDWire configuration and reading
     ...                procedure for the SDWire works correctly and, after the
     ...                procedure, the test device is readable.
     Configure SDWire    ${serial_id}    ${vendor_id}    ${product_id}
+    SSHLibrary.Write    reboot
+    Sleep    5s
+    Log Out And Close Connection
+    Setup SSH Connection
     Check SDWire Configuration
 
-# SDWire_003 SDWire connecting to the Test Server
-#     [Documentation]    This test aims to verify that the connecting to the TS
-#     ...                procedure for the SDWire works correctly and, after the
-#     ...                procedure, the test device is manageable from the TS.
-#     Check Connection To TS
+SDWire_003 SDWire connecting to the Test Server
+    [Documentation]    This test aims to verify that the connecting to the TS
+    ...                procedure for the SDWire works correctly and, after the
+    ...                procedure, the test device is manageable from the TS.
+    Check Connection To TS
 
-# SDWire_004 SD card flashing
-#     [Documentation]    This test aims to verify that the flashing mounted in
-#     ...                the SDWire SD Card procedure works correctly.
-#     Flash SD card
+SDWire_004 SD card flashing
+    [Documentation]    This test aims to verify that the flashing mounted in
+    ...                the SDWire SD Card procedure works correctly.
+    Flash SD card
 
-# SDWire_005 SDWire connecting to the Device Under Test
-#     [Documentation]    This test aims to verify that the connecting to the DUT
-#     ...                procedure for the SDWire works correctly and, after the
-#     ...                procedure, the test device is not manageable from the TS.
-#     Check Connection To DUT
+SDWire_005 SDWire connecting to the Device Under Test
+    [Documentation]    This test aims to verify that the connecting to the DUT
+    ...                procedure for the SDWire works correctly and, after the
+    ...                procedure, the test device is not manageable from the TS.
+    Check Connection To DUT
 
-# SDWire_006 OS booting form card mounted in the SDWire
-#     [Documentation]   This test aims to verify that the DUT boots properly
-#     ...               after flashing SD Card by using SDWire.
-#     Change Relay State
-#     Wait For Login Prompt In OS
-#     Close And Open Connection
-#     Change Relay State
+SDWire_006 OS booting form card mounted in the SDWire
+    [Documentation]   This test aims to verify that the DUT boots properly
+    ...               after flashing SD Card by using SDWire.
+    Change Relay State
+    Wait For Login Prompt In OS
+    Log Out And Close Connection
+    Setup SSH Connection
+    Change Relay State
