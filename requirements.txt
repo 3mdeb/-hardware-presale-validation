@@ -8,3 +8,4 @@ oauth2client
 PyOpenSSL
 wakeonlan
 cryptography
+urllib3==1.26.16

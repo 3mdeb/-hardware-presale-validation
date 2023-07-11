@@ -52,5 +52,5 @@ $SCRIPT - name of the script dedicated for the tested platform
 For example, to run test for the SD Wire, the following command should be used:
 
 ```bash
-robot -L TRACE -v stand_ip:192.168.4.91 -v device:sd_wire -v serial_number:01-09 scripts/sd-wire.robot
+robot -L TRACE -v stand_ip:192.168.4.55 -v device:sd_wire -v serial_number:01-09 scripts/sd-wire.robot
 ```
