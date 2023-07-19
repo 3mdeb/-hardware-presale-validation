@@ -6,7 +6,6 @@ Library             OperatingSystem
 Library             String
 Library             RequestsLibrary
 Library             Collections
-Resource            ../rtectrl-rest-api/rtectrl.robot
 Resource            ../keywords.robot
 
 Suite Setup         Run Keyword    Prepare Test Suite
