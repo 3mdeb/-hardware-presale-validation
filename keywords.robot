@@ -41,10 +41,11 @@ Log Out And Close Connection
 Serial setup
     [Documentation]    Setup serial communication via telnet. Takes host and
     ...    ser2net port as an arguments.
-    [Arguments]    ${host}    ${s2n_port}
+    [Arguments]
+    # We always connect to the stand, and the DUT is connected to ttyS1
     Telnet.Open Connection
-    ...    ${host}
-    ...    port=${s2n_port}
+    ...    ${stand_ip}
+    ...    port=13541
     ...    newline=LF
     ...    terminal_emulation=yes
     ...    terminal_type=vt100
@@ -53,28 +54,42 @@ Serial setup
 
 SDWire Diagnosis
     [Documentation]    Check that the SDWire is properly recognized by the
-    ...    dmesg command.
-    SSHLibrary.Write    dmesg
-    SSHLibrary.Read Until    ${sd_wire_recognition_string}
-    ${output}=    SSHLibrary.Read Until Prompt
-    Should Contain    ${output}    FT200X USB I2C
-    RETURN    ${output}
+    ...    lsusb command.
+    # Use lsusb as it shows currently connected devices, instead of the whole
+    # history of connected USB devices in dmesg. The test would detect the
+    # wrong FTDI serial number if SDwire would be tested in serialized mode
+    # without rebooting the stand...
+    ${output}=    SSHLibrary.Execute Command    lsusb
+    # When SDwire is already configured, the test should not fail, but skip
+    # the IDs detection and SDwire configuration programming.
+    IF    '''${ftdi_string}''' in '''${output}'''
+        ${configed}=    Set Variable    ${False}
+    ELSE IF    '''${sd_wire_string}''' in '''${output}'''
+        ${configed}=    Set Variable    ${True}
+    ELSE
+        Fatal Error    SD-wire not detected. Did you forget to plug the USB cable to SDWire?
+    END
+    RETURN    ${output}    ${configed}
 
 SDWire Identification
     [Documentation]    Identify the connected SDWire.
-    [Arguments]    ${dmesg_output}
-    ${vendor_product}=    Get Lines Containing String    ${dmesg_output}    ${vendor_product_line}
-    ${serial_number}=    Get Lines Containing String    ${dmesg_output}    SerialNumber:
-    ${vendor_id}=    Fetch From Right    ${vendor_product.split()[-3].replace(',','')}    =
-    ${product_id}=    Fetch From Right    ${vendor_product.split()[-2].replace(',','')}    =
+    [Arguments]    ${lsusb_output}
+    ${ftdi_line}=    Get Lines Containing String    ${lsusb_output}    ${ftdi_string}
+    ${length}=    Get Length    ${ftdi_line}
+    Should Be True    ${length} != 0
+    @{words}=    Split String    ${ftdi_line}    ${SPACE}
+    # Vendor ID and Product ID is right after bus, bus num, dev, dev num and ID string
+    ${vendor_id}    ${product_id}=    Split String    ${words[5]}    :
+    # We get the serial number from the USB device descriptor from given VID/PID
+    ${output}=    SSHLibrary.Execute Command    lsusb -v -d ${words[5]}
+    ${serial_number}=    Get Lines Containing String    ${output}    iSerial
     ${serial_id}=    Evaluate    "${serial_number.split()[-1]}"
     RETURN    ${vendor_id}    ${product_id}    ${serial_id}
 
 Configure SDWire
     [Documentation]    Configure SDWire with the given parameters.
     [Arguments]    ${serial_id}    ${vendor_id}    ${product_id}
-    ${parameters}=    Set Variable
-    ...    --device-serial=${serial_id} --vendor=0x${vendor_id} --product=0x${product_id} --device-type=sd-wire --set-serial=sd-wire_${serial_number}
+    ${parameters}=    Set Variable    --device-serial=${serial_id} --vendor=0x${vendor_id} --product=0x${product_id} --device-type=sd-wire --set-serial=sd-wire_${serial_number}
     SSHLibrary.Execute Command    sd-mux-ctrl ${parameters}
 
 Check SDWire Configuration
@@ -102,18 +117,26 @@ Check Connection To DUT
 
 Flash SD Card
     [Documentation]    Flash SD Card using bmaptool.
-    ${parameters}=    Set Variable    --nobmap ${image_to_flash} /dev/sda
-    SSHLibrary.Write    bmaptool copy ${parameters}
-    SSHLibrary.Set Client Configuration    timeout=120s
-    SSHLibrary.Read Until    synchronizing
+    SSHLibrary.File Should Exist    ${image_to_flash}
+    ${parameters}=    Set Variable    
+    SSHLibrary.Set Client Configuration    timeout=240s
+    SSHLibrary.Execute Command    bmaptool copy --bmap ${bmap_file} ${image_to_flash} /dev/sda
     SSHLibrary.Set Client Configuration    timeout=60s
 
-Change Relay State
-    [Documentation]    Change the relay state on RTE.
-    SSHLibrary.Execute Command    ./rte_ctrl -rel
+Relay Off
+    [Documentation]    Change the relay state on RTE to off.
+    SSHLibrary.Execute Command    echo 0 > /sys/class/gpio/gpio199/value
 
-Wait For Login Prompt In OS
+Relay On
+    [Documentation]    Change the relay state on RTE to on.
+    SSHLibrary.Execute Command    echo 1 > /sys/class/gpio/gpio199/value
+    
+
+Power DUT On And Wait For Login Prompt In OS
     [Documentation]    Start the minicom connection and wait for the login
     ...    prompt.
-    SSHLibrary.Write    minicom -D /dev/ttyUSB0
-    SSHLibrary.Read Until    login:
+    Relay Off
+    Serial setup
+    Sleep    1s
+    Relay On
+    Telnet.Read Until    login:

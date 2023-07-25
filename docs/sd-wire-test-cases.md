@@ -162,13 +162,14 @@ procedure works correctly.
 1. Run in the TS terminal the following commands:
 
     ```bash
-    sudo bmaptool copy --nobmap <RTE_image> <device_path>
+    sudo bmaptool copy --bmap <RTE_image_bmap_file> <RTE_image> <device_path>
     ```
 
     Example command:
 
     ```bash
-    sudo bmaptool copy --nobmap core-image-minimal-orange-pi-zero-v0.7.3.wic.gz /dev/sda
+    sudo bmaptool copy --bmap core-image-minimal-orange-pi-zero-v0.7.3.wic.bmap \
+         core-image-minimal-orange-pi-zero-v0.7.3.wic.gz /dev/sda
     ```
 
 **Expected result**
@@ -242,13 +243,13 @@ using SDWire.
 1. Power on the DUT by running the following command in the TS terminal:
 
     ```bash
-    ./rte_ctrl -rel
+    rte_ctrl rel
     ```
 
 1. Run the following command to get the output from the DUT:
 
     ```bash
-    minicom -D /dev/ttyUSB0
+    minicom -D /dev/ttyS1
     ```
 
 **Expected result**
