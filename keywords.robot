@@ -41,7 +41,6 @@ Log Out And Close Connection
 Serial setup
     [Documentation]    Setup serial communication via telnet. Takes host and
     ...    ser2net port as an arguments.
-    [Arguments]
     # We always connect to the stand, and the DUT is connected to ttyS1
     Telnet.Open Connection
     ...    ${stand_ip}
