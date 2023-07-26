@@ -41,9 +41,9 @@ RTE that has been used as the Test Server.
 
 ### Preparing an image for the device
 
-1. Download the latest Armbian stable version from the
-    [Project site](https://www.armbian.com/orange-pi-zero/).
-1. Flash the SD card using `bmaptool` or `balenaEtcher`.
+1. Download the latest meta-rte version from the
+   [the cloud](https://cloud.3mdeb.com/index.php/f/607222).
+2. Flash the SD card using `bmaptool` or `balenaEtcher`.
     * to do this by `balenaEtcher` go to the [producer site][balena]
     and follow his procedure on how to download and flash the SD card
     * to do this by `bmaptool` reproduce the following steps:
@@ -65,23 +65,25 @@ RTE that has been used as the Test Server.
             ```bash
             sudo bmaptool copy --bmap ~/path/where/your/bmap/file/is/located /path/where/your/image/is/located /path/to/memory/device
             ```
+3. Expand the `/data` partition to 2GB.
+4. Save the `core-image-minimal-orange-pi-zero-v0.7.4-rc4.wic.bmap` and
+   `core-image-minimal-orange-pi-zero-v0.7.4-rc4.wic.gz`
+   to `/data`.
 
 ### RTE Test Server setup
 
 1. Insert Orange Pi into RTE.
 1. Insert SD card into Orange Pi.
 1. Connect the ethernet cable to Orange Pi.
-1. Plug the USB-UART converter into your computer and connect its pins with
-    [RTE J2 Header](../specification/#uart0-header). (you may need a
-    USB extension cable)
+1. Connect the EXT UART J18 header pins with DUT [RTE J2 Header](../specification/#uart0-header).
 
-    |UART Converter | RTE J2 Header|
+    | RTE UART J18  | RTE J2 Header|
     |:-------------:|:------------:|
     | GND           | GND          |
-    | TXD           | RX           |
-    | RXD           | TX           |
+    | TX            | RX           |
+    | RX            | TX           |
 
-1. Open the serial connection with RTE from your PC using a previously connected
+2. Open the serial connection with RTE from your PC using a previously connected
     USB-UART converter by executing the following command:
 
     ```bash
@@ -92,34 +94,12 @@ RTE that has been used as the Test Server.
     > Converter for example `/dev/ttyUSB0`. The `dmesg` command allows for
     > identifying the latest connected devices.
 
-1. Plug the power supply into the RTE J17 Micro-USB slot.
-1. Login into the device by using the default credentials:
+3. Plug the power supply into the RTE J17 Micro-USB slot.
+4. Login into the device by using the default credentials:
     - Login: `root`
-    - Password: `armbian`
+    - Password: `meta-rte`
 
-1. Set static ip for the Test Server. To do this edit the file
-    `/lib/systemd/network/50-dhcp.network` (i.e. by using vi). The file should
-    look as follows:
-
-    ```bash
-    # Ethernet adapter 0
-    auto eth0
-    allow-hotplug eth0
-    #no-auto-down eth0
-    iface eth0 inet static
-    address 192.168.4.XXX
-    netmask 255.255.255.0
-    gateway 192.168.4.1
-    dns-nameservers 192.168.4.1
-    #dns-nameservers 1.1.1.1 1.0.0.1
-    ```
-
-    The `XXX` field should be replaced by a three-digit number, chosen in such
-    a way that it corresponds to a free address in the local network.
-
-1. Save changes and reboot the device.
-1. Login into the device by using the above-mentioned credentials.
-1. Execute the following command to see if IP address is correct:
+5. Execute the following command to see if the IP address is correct:
 
     ```bash
     ip a
@@ -136,7 +116,7 @@ RTE that has been used as the Test Server.
        valid_lft forever preferred_lft forever
     ```
 
-1. Check the correctness of the connection to the Internet by executing the
+6. Check the correctness of the connection to the Internet by executing the
     following command:
 
     ```bash
@@ -150,8 +130,8 @@ RTE that has been used as the Test Server.
     64 bytes from waw02s18-in-f14.1e100.net (216.58.209.14): icmp_seq=1 ttl=55 time=19.5 ms
     ```
 
-1. Submit the address reservation requests for the device to `Amado`.
-1. Log out from RTE by closing the minicom connection.
+7.  Submit the address reservation requests for the device to `Amado`.
+8.  Log out from RTE by closing the minicom connection.
 
 ## RTE - Device Under Test setup
 
@@ -171,16 +151,16 @@ Prepare the device according to the
 
 ## Combining and finalizing the setup
 
-1. Make connections on `Armbian` RTE according to below the image:
+1. Make connections on Test Server RTE according to below the image:
 
     ![Armbian RTE](images/sdwire-armbian-top.jpg)
 
-1. Connect the Ethernet cable from the switch/modem to the Ethernet port
+2. Connect the Ethernet cable from the switch/modem to the Ethernet port
     (CYAN on the image above).
 
-1. Make connections on `meta-rte` RTE according to the below images:
+3. Make connections on DUT RTE according to the below images:
 
     ![meta RTE top](images/sdwire-meta-rte-top.jpg)
     ![meta rte botttom](images/sdwire-meta-rte-bottom.jpg)
 
-1. The setup should be fully functional from now on.
+4. The setup should be fully functional from now on.
